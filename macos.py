@@ -231,6 +231,19 @@ def _on_open_in_telegram(_=None) -> None:
                 _show_error(f"Не удалось скопировать ссылку:\n{exc}")
 
 
+def _on_copy_link(_=None) -> None:
+    url = tg_proxy_url(_config)
+    log.info("Copying link: %s", url)
+    try:
+        if pyperclip:
+            pyperclip.copy(url)
+        else:
+            subprocess.run(["pbcopy"], input=url.encode(), check=True)
+    except Exception as exc:
+        log.error("Clipboard copy failed: %s", exc)
+        _show_error(f"Не удалось скопировать ссылку:\n{exc}")
+
+
 def _on_restart(_=None) -> None:
     def _do():
         global _config
@@ -487,6 +500,7 @@ class TgWsProxyApp(_TgWsProxyAppBase):
         self._open_tg_item = rumps.MenuItem(
             f"Открыть в Telegram ({link_host}:{port})", callback=_on_open_in_telegram
         )
+        self._copy_link_item = rumps.MenuItem("Скопировать ссылку", callback=_on_copy_link)
         self._restart_item = rumps.MenuItem("Перезапустить прокси", callback=_on_restart)
         self._settings_item = rumps.MenuItem("Настройки...", callback=_on_edit_config)
         self._logs_item = rumps.MenuItem("Открыть логи", callback=_on_open_logs)
@@ -505,6 +519,7 @@ class TgWsProxyApp(_TgWsProxyAppBase):
             quit_button="Выход",
             menu=[
                 self._open_tg_item,
+                self._copy_link_item,
                 None,
                 self._restart_item,
                 self._settings_item,

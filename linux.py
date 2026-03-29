@@ -88,6 +88,16 @@ def _on_open_in_telegram(icon=None, item=None) -> None:
         _show_error(f"Не удалось скопировать ссылку:\n{exc}")
 
 
+def _on_copy_link(icon=None, item=None) -> None:
+    url = tg_proxy_url(_config)
+    log.info("Copying link: %s", url)
+    try:
+        pyperclip.copy(url)
+    except Exception as exc:
+        log.error("Clipboard copy failed: %s", exc)
+        _show_error(f"Не удалось скопировать ссылку:\n{exc}")
+
+
 def _on_restart(icon=None, item=None) -> None:
     threading.Thread(
         target=lambda: restart_proxy(_config, _show_error), daemon=True
@@ -220,6 +230,7 @@ def _build_menu():
     link_host = tg_ws_proxy.get_link_host(host)
     return pystray.Menu(
         pystray.MenuItem(f"Открыть в Telegram ({link_host}:{port})", _on_open_in_telegram, default=True),
+        pystray.MenuItem("Скопировать ссылку", _on_copy_link),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem("Перезапустить прокси", _on_restart),
         pystray.MenuItem("Настройки...", _on_edit_config),

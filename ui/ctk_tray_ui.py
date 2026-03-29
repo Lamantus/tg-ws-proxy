@@ -464,19 +464,35 @@ def populate_first_run_window(
         ("Как подключить Telegram Desktop:", True),
         ("  Автоматически:", True),
         ("  ПКМ по иконке в трее → «Открыть в Telegram»", False),
-        (f"  Или ссылка: {tg_url}", False),
+        (f"  Или скопировать ссылку, отправить её себе в TG и нажать по ней: {tg_url}", False),
         ("\n  Вручную:", True),
         ("  Настройки → Продвинутые → Тип подключения → Прокси", False),
         (f"  MTProto → {host} : {port}", False),
         (f"  Secret: dd{secret}", False),
     ]
 
+    textbox = ctk.CTkTextbox(
+        frame,
+        font=(theme.ui_font_family, 13),
+        fg_color=theme.bg,
+        border_width=0,
+        text_color=theme.text_primary,
+        activate_scrollbars=False,
+        wrap="word",
+        height=275,
+    )
+    textbox._textbox.tag_configure("bold", font=(theme.ui_font_family, 13, "bold"))
+    textbox._textbox.configure(spacing1=1, spacing3=1)
     for text, bold in sections:
-        weight = "bold" if bold else "normal"
-        ctk.CTkLabel(frame, text=text,
-                     font=(theme.ui_font_family, 13, weight),
-                     text_color=theme.text_primary,
-                     anchor="w", justify="left").pack(anchor="w", pady=1)
+        if text.startswith("\n"):
+            textbox.insert("end", "\n")
+            text = text[1:]
+        if bold:
+            textbox.insert("end", text + "\n", "bold")
+        else:
+            textbox.insert("end", text + "\n")
+    textbox.configure(state="disabled")
+    textbox.pack(anchor="w", fill="x")
 
     ctk.CTkFrame(frame, fg_color="transparent", height=16).pack()
 

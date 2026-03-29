@@ -25,7 +25,7 @@ def install_tkinter_variable_del_guard() -> None:
 
 CONFIG_DIALOG_SIZE: Tuple[int, int] = (460, 560)
 CONFIG_DIALOG_FRAME_PAD: Tuple[int, int] = (20, 14)
-FIRST_RUN_SIZE: Tuple[int, int] = (520, 440)
+FIRST_RUN_SIZE: Tuple[int, int] = (520, 480)
 FIRST_RUN_FRAME_PAD: Tuple[int, int] = (28, 24)
 
 
